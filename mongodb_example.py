@@ -1,15 +1,14 @@
 from pymongo import MongoClient
 
 # MongoDB connection settings
-mongodb_host = 'localhost'
-mongodb_port = 27017
+mongodb_uri = "mongodb+srv://meraj154213:iCFmmhPjFdUk2hvV@cluster0.hj5abn5.mongodb.net/?retryWrites=true&w=majority"
 
 # Connect to MongoDB
-client = MongoClient(mongodb_host, mongodb_port)
+client = MongoClient(mongodb_uri)
 
 # Access a database and collection
 db = client['mydatabase']
-collection = db['mycollection']
+collection = db['testdb']
 
 # Perform MongoDB operations
 document = {'name': 'John', 'age': 30}
