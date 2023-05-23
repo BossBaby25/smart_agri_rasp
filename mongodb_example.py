@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 from pymongo import MongoClient
+import Adafruit_DHT
 
 # MongoDB connection settings
 mongodb_uri = "mongodb+srv://meraj154213:iCFmmhPjFdUk2hvV@cluster0.hj5abn5.mongodb.net/?retryWrites=true&w=majority"
@@ -9,7 +10,10 @@ mongodb_uri = "mongodb+srv://meraj154213:iCFmmhPjFdUk2hvV@cluster0.hj5abn5.mongo
 GPIO.setmode(GPIO.BCM)
 
 # Define the GPIO pin connected to the soil sensor
-soil_moisture_pin = 21
+soil_moisture_pin = 18
+
+# Define the GPIO pin connected to the DHT22 sensor
+dht_pin = 22
 
 def read_soil_moisture():
     # Set up the GPIO pin as an input
@@ -19,6 +23,12 @@ def read_soil_moisture():
     moisture_level = GPIO.input(soil_moisture_pin)
 
     return moisture_level
+
+def read_dht22():
+    # Read temperature and humidity from DHT22 sensor
+    humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, dht_pin)
+
+    return humidity, temperature
 
 try:
     # Connect to MongoDB
@@ -32,13 +42,21 @@ try:
         moisture = read_soil_moisture()
         print("Soil moisture level: {}".format(moisture))
 
+        humidity, temperature = read_dht22()
+        print("Temperature: {}°C, Humidity: {}%".format(temperature, humidity))
+
         # Prepare the document to be inserted into the collection
-        document = {'moisture_level': moisture, 'timestamp': time.time()}
+        document = {
+            'moisture_level': moisture,
+            'temperature': temperature,
+            'humidity': humidity,
+            'timestamp': time.time()
+        }
 
         # Insert the document into the collection
         collection.insert_one(document)
 
-        time.sleep(60)
+        time.sleep(1)
 
 except KeyboardInterrupt:
     # Clean up GPIO settings on keyboard interrupt
