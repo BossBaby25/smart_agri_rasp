@@ -10,10 +10,10 @@ mongodb_uri = "mongodb+srv://meraj154213:iCFmmhPjFdUk2hvV@cluster0.hj5abn5.mongo
 GPIO.setmode(GPIO.BCM)
 
 # Define the GPIO pin connected to the soil sensor
-soil_moisture_pin = 18
+soil_moisture_pin = 21
 
 # Define the GPIO pin connected to the DHT22 sensor
-dht_pin = 22
+dht_pin = 4
 
 def read_soil_moisture():
     # Set up the GPIO pin as an input
