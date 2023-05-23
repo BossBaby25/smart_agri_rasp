@@ -38,7 +38,7 @@ try:
         # Insert the document into the collection
         collection.insert_one(document)
 
-        time.sleep(1)
+        time.sleep(60)
 
 except KeyboardInterrupt:
     # Clean up GPIO settings on keyboard interrupt
