@@ -1,18 +1,48 @@
+import RPi.GPIO as GPIO
+import time
 from pymongo import MongoClient
 
 # MongoDB connection settings
 mongodb_uri = "mongodb+srv://meraj154213:iCFmmhPjFdUk2hvV@cluster0.hj5abn5.mongodb.net/?retryWrites=true&w=majority"
 
-# Connect to MongoDB
-client = MongoClient(mongodb_uri)
+# Set the GPIO mode
+GPIO.setmode(GPIO.BCM)
 
-# Access a database and collection
-db = client['mydatabase']
-collection = db['testdb']
+# Define the GPIO pin connected to the soil sensor
+soil_moisture_pin = 18
 
-# Perform MongoDB operations
-document = {'name': 'John', 'age': 30}
-collection.insert_one(document)
+def read_soil_moisture():
+    # Set up the GPIO pin as an input
+    GPIO.setup(soil_moisture_pin, GPIO.IN)
 
-# Close MongoDB connection
-client.close()
+    # Read the soil moisture level
+    moisture_level = GPIO.input(soil_moisture_pin)
+
+    return moisture_level
+
+try:
+    # Connect to MongoDB
+    client = MongoClient(mongodb_uri)
+
+    # Access a database and collection
+    db = client['mydatabase']
+    collection = db['testdb']
+
+    while True:
+        moisture = read_soil_moisture()
+        print("Soil moisture level: {}".format(moisture))
+
+        # Prepare the document to be inserted into the collection
+        document = {'moisture_level': moisture, 'timestamp': time.time()}
+
+        # Insert the document into the collection
+        collection.insert_one(document)
+
+        time.sleep(1)
+
+except KeyboardInterrupt:
+    # Clean up GPIO settings on keyboard interrupt
+    GPIO.cleanup()
+
+    # Close MongoDB connection
+    client.close()
