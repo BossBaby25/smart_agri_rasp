@@ -18,9 +18,8 @@ soil_moisture_pin = 21
 # Define the GPIO pin connected to the DHT22 sensor
 dht_pin = 4
 
-# RS485 to TTL settings
-serial_port = '/dev/ttyAMA0'  # Update with the correct serial port
-baud_rate = 9600
+# Serial port settings for NPK sensor
+serial_port = serial.Serial('/dev/ttyAMA0', baudrate=9600, timeout=1)
 
 def read_soil_moisture():
     # Set up the GPIO pin as an input
@@ -37,23 +36,17 @@ def read_dht22():
 
     return humidity, temperature
 
-def read_npk_data():
-    # Initialize the serial connection
-    ser = serial.Serial(serial_port, baud_rate, timeout=1)
+def read_npk_sensor():
+    # Read the response from NPK sensor
+    response = serial_port.readline().decode().strip()
 
-    # Send command to request NPK data
-    ser.write(b'ReadNPK\r\n')
+    # Process the response and extract N, P, K data
+    # Modify the code below to parse and extract the NPK data from the response
+    nitrogen = 0.0
+    phosphorus = 0.0
+    potassium = 0.0
 
-    # Read the response from the sensor
-    response = ser.readline().decode().strip()
-
-    # Extract NPK values from the response
-    npk_data = response.split(',')
-
-    # Close the serial connection
-    ser.close()
-
-    return npk_data
+    return nitrogen, phosphorus, potassium
 
 try:
     # Connect to MongoDB
@@ -70,19 +63,17 @@ try:
         humidity, temperature = read_dht22()
         print("Temperature: {}°C, Humidity: {}%".format(temperature, humidity))
 
-        npk_data = read_npk_data()
-        print("NPK Data: N={}, P={}, K={}".format(npk_data[0], npk_data[1], npk_data[2]))
+        nitrogen, phosphorus, potassium = read_npk_sensor()
+        print("NPK levels - N: {}, P: {}, K: {}".format(nitrogen, phosphorus, potassium))
 
         # Prepare the document to be inserted into the collection
         document = {
             'moisture_level': moisture,
             'temperature': temperature,
             'humidity': humidity,
-            'npk_data': {
-                'N': npk_data[0],
-                'P': npk_data[1],
-                'K': npk_data[2]
-            },
+            'nitrogen': nitrogen,
+            'phosphorus': phosphorus,
+            'potassium': potassium,
             'timestamp': time.time()
         }
 
@@ -97,3 +88,6 @@ except KeyboardInterrupt:
 
     # Close MongoDB connection
     client.close()
+
+    # Close the serial port
+    serial_port.close()
