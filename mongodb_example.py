@@ -37,14 +37,17 @@ def read_dht22():
     return humidity, temperature
 
 def read_npk_sensor():
+    # Send command to request NPK data
+    serial_port.write(b'ReadNPK\r\n')
+
     # Read the response from NPK sensor
     response = serial_port.readline().decode().strip()
 
     # Process the response and extract N, P, K data
-    # Modify the code below to parse and extract the NPK data from the response
-    nitrogen = 0.0
-    phosphorus = 0.0
-    potassium = 0.0
+    npk_data = response.split(',')
+    nitrogen = float(npk_data[0])
+    phosphorus = float(npk_data[1])
+    potassium = float(npk_data[2])
 
     return nitrogen, phosphorus, potassium
 
