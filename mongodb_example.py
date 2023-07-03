@@ -10,7 +10,7 @@ mongodb_uri = "mongodb+srv://meraj154213:iCFmmhPjFdUk2hvV@cluster0.hj5abn5.mongo
 GPIO.setmode(GPIO.BCM)
 
 # Serial port settings for NPK sensor
-serial_port = serial.Serial('/dev/ttyACM0', baudrate=9600, timeout=1)
+serial_port = serial.Serial('/dev/ttyACM0', baudrate=4800, timeout=1)
 
 def read_npk_sensor():
     # Read the response from Arduino
@@ -28,7 +28,7 @@ try:
 
     # Access a database and collection
     db = client['mydatabase']
-    collection = db['test1db']
+    collection = db['testdb1']
 
     while True:
         nitrogen, phosphorus, potassium = read_npk_sensor()
