@@ -39,6 +39,13 @@ void loop() {
   Serial.print(val3);
   Serial.println(" mg/kg");
 
+  // Send NPK values to Raspberry Pi via serial port
+  Serial.print(val1);
+  Serial.print(",");
+  Serial.print(val2);
+  Serial.print(",");
+  Serial.println(val3);
+
   delay(2000);
 }
 
