@@ -3,6 +3,7 @@ import time
 from pymongo import MongoClient
 import serial
 import Adafruit_DHT
+import I2C_LCD_driver
 
 # MongoDB connection settings
 mongodb_uri = "mongodb+srv://meraj154213:iCFmmhPjFdUk2hvV@cluster0.hj5abn5.mongodb.net/?retryWrites=true&w=majority"
@@ -15,6 +16,9 @@ serial_port = serial.Serial('/dev/ttyACM0', baudrate=4800, timeout=1)
 
 # DHT22 sensor pin
 dht_pin = 4
+
+# LCD display
+lcd = I2C_LCD_driver.lcd()
 
 def read_npk_sensor():
     # Read the response from Arduino
@@ -50,6 +54,12 @@ try:
         nitrogen, phosphorus, potassium, soil_moisture, humidity, temperature = read_npk_sensor()
         print("NPK levels - N: {}, P: {}, K: {}, soil_moisture: {}".format(nitrogen, phosphorus, potassium, soil_moisture))
         print("DHT22 sensor - Humidity: {:.2f}%, Temperature: {:.2f}°C".format(humidity, temperature))
+
+        # Display the values on the LCD
+        lcd.lcd_display_string("NPK levels:", 1)
+        lcd.lcd_display_string("N: {}, P: {}, K: {}".format(nitrogen, phosphorus, potassium), 2)
+        lcd.lcd_display_string("Soil Moisture: {}".format(soil_moisture), 3)
+        lcd.lcd_display_string("Humidity: {:.2f}%, Temp: {:.2f}C".format(humidity, temperature), 4)
 
         # Prepare the document to be inserted into the collection
         document = {
