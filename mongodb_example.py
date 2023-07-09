@@ -10,12 +10,12 @@ mongodb_uri = "mongodb+srv://meraj154213:iCFmmhPjFdUk2hvV@cluster0.hj5abn5.mongo
 GPIO.setmode(GPIO.BCM)
 
 # Serial port settings for Arduino
-serial_port = serial.Serial('/dev/ttyACM0', baudrate=4800, timeout=1)
+serial_port = serial.Serial('/dev/ttyACM0',4800)
 
 def read_npk_sensor():
     # Read the response from Arduino
-    arduino_data = serial_port.readline().decode('utf-8').strip()
-    npk_data = arduino_data.split(',')
+    arduino_data = str(serial_port.readline())
+    # npk_data = arduino_data.split(',')
     
     print("Received data from Arduino:", npk_data)  # Debugging line
     
