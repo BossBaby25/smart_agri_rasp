@@ -23,10 +23,11 @@ def read_npk_sensor():
         nitrogen = npk_data[0]
         phosphorus = npk_data[1]
         potassium = npk_data[2]
+        soil_moisture = npk_data[3]
     else:
-        nitrogen, phosphorus, potassium = "N/A", "N/A", "N/A"
+        nitrogen, phosphorus, potassium, soil_moisture = "N/A", "N/A", "N/A", "N/A"
 
-    return nitrogen, phosphorus, potassium
+    return nitrogen, phosphorus, potassium, soil_moisture
 
 try:
     # Connect to MongoDB
@@ -37,14 +38,15 @@ try:
     collection = db['test11db']
 
     while True:
-        nitrogen, phosphorus, potassium = read_npk_sensor()
-        print("NPK levels - N: {}, P: {}, K: {}".format(nitrogen, phosphorus, potassium))
+        nitrogen, phosphorus, potassium, soil_moisture = read_npk_sensor()
+        print("NPK levels - N: {}, P: {}, K: {},, soil_moisture: {}".format(nitrogen, phosphorus, potassium, soil_moisture))
 
         # Prepare the document to be inserted into the collection
         document = {
             'nitrogen': nitrogen,
             'phosphorus': phosphorus,
             'potassium': potassium,
+            'soil_moisture' : soil_moisture,
             'timestamp': time.time()
         }
 
