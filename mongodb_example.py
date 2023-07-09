@@ -3,7 +3,11 @@ import time
 from pymongo import MongoClient
 import serial
 import Adafruit_DHT
-import I2C_LCD_driver
+import requests
+
+# ThingSpeak API settings
+thingspeak_api_key = "GEKETSRJ26FSSSXK"
+thingspeak_update_url = "https://api.thingspeak.com/update.json"
 
 # MongoDB connection settings
 mongodb_uri = "mongodb+srv://meraj154213:iCFmmhPjFdUk2hvV@cluster0.hj5abn5.mongodb.net/?retryWrites=true&w=majority"
@@ -16,9 +20,6 @@ serial_port = serial.Serial('/dev/ttyACM0', baudrate=4800, timeout=1)
 
 # DHT22 sensor pin
 dht_pin = 4
-
-# LCD display
-lcd = I2C_LCD_driver.lcd()
 
 def read_npk_sensor():
     # Read the response from Arduino
@@ -55,12 +56,6 @@ try:
         print("NPK levels - N: {}, P: {}, K: {}, soil_moisture: {}".format(nitrogen, phosphorus, potassium, soil_moisture))
         print("DHT22 sensor - Humidity: {:.2f}%, Temperature: {:.2f}°C".format(humidity, temperature))
 
-        # Display the values on the LCD
-        lcd.lcd_display_string("NPK levels:", 1)
-        lcd.lcd_display_string("N: {}, P: {}, K: {}".format(nitrogen, phosphorus, potassium), 2)
-        lcd.lcd_display_string("Soil Moisture: {}".format(soil_moisture), 3)
-        lcd.lcd_display_string("Humidity: {:.2f}%, Temp: {:.2f}C".format(humidity, temperature), 4)
-
         # Prepare the document to be inserted into the collection
         document = {
             'nitrogen': nitrogen,
@@ -74,6 +69,21 @@ try:
 
         # Insert the document into the collection
         collection.insert_one(document)
+
+        # Prepare the data to be sent to ThingSpeak
+        data = {
+            'api_key': thingspeak_api_key,
+            'field1': nitrogen,
+            'field2': phosphorus,
+            'field3': potassium,
+            'field4': soil_moisture,
+            'field5': humidity,
+            'field6': temperature
+        }
+
+        # Send the data to ThingSpeak using HTTP POST request
+        response = requests.post(thingspeak_update_url, data=data)
+        print("Data sent to ThingSpeak. Response:", response.text)
 
         time.sleep(1)
 
