@@ -43,10 +43,7 @@ byte nitrogen() {
   delay(100);
   for (byte i = 0; i < 8; i++) {
     values[i] = mod.read();
-    Serial.print(values[i], HEX);
   }
-  Serial.println();
-
   return values[4];
 }
 
@@ -54,9 +51,7 @@ byte phosphorous() {
   mod.write(phos, 8);
   for (byte i = 0; i < 8; i++) {
     values[i] = mod.read();
-    Serial.print(values[i], HEX);
   }
-  Serial.println();
   return values[4];
 }
 
@@ -64,8 +59,6 @@ byte potassium() {
   mod.write(pota, 8);
   for (byte i = 0; i < 8; i++) {
     values[i] = mod.read();
-    Serial.print(values[i], HEX);
   }
-  Serial.println();
   return values[4];
 }
