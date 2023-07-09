@@ -28,17 +28,6 @@ void loop() {
   val3 = potassium();
   delay(250);
 
-  // Print values to the serial monitor
-  Serial.print("Nitrogen: ");
-  Serial.print(val1);
-  Serial.println(" mg/kg");
-  Serial.print("Phosphorous: ");
-  Serial.print(val2);
-  Serial.println(" mg/kg");
-  Serial.print("Potassium: ");
-  Serial.print(val3);
-  Serial.println(" mg/kg");
-
   // Send NPK values to Raspberry Pi via serial port
   Serial.print(val1);
   Serial.print(",");
